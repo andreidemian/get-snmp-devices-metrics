@@ -1,8 +1,7 @@
 # py-ups-snmp
 Python UPS SNMP
 
-CyberPower UPS:
-    Class to get UPS data from a CyberPower UPS using SNMP v1
+CyberPower UPS Get SNMP V1 data
 
     example usage:
 
