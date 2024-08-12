@@ -25,7 +25,7 @@ class upsCyberPower:
         self.community = community
 
     async def get_snmp_v1_data(self, ip:str, community:str, oid:str):
-        # Await the getCmd coroutine
+
         errorIndication, errorStatus, errorIndex, varBinds = await getCmd(
             SnmpEngine(),
             CommunityData(community, mpModel=0),
@@ -35,7 +35,6 @@ class upsCyberPower:
         )
 
         value = None
-        # Handle the result
         if errorIndication:
             print(f"Error Indication: {errorIndication}")
         elif errorStatus:
@@ -44,7 +43,6 @@ class upsCyberPower:
             for varBind in varBinds:
                 if(varBind):
                     value = varBind[1].prettyPrint()
-                #print(f'{varBind[0].prettyPrint()} = {varBind[1].prettyPrint()}')
         return value
 
     def toFloat(self,strValue: str) -> float:
