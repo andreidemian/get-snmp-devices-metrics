@@ -4,7 +4,7 @@ from pysnmp.hlapi.asyncio import getCmd, SnmpEngine, CommunityData, UdpTransport
 class upsCyberPower:
 
     """
-        Get SNMP V1 data from a CyberPower UPS
+        CyberPower UPS: Get SNMP V1 data
 
         example usage:
 
