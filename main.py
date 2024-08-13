@@ -10,8 +10,11 @@ SSH_USER = 'user'
 SSH_KEY = '/path/to/key'
 
 # UPS SNMP Configuration
-UPS_SNMP_HOST = '192.168.1.142'
-UPS_SNMP_COMMUNITY = 'public'
+UPS_SNMP_HOST = '192.168.111.142'
+UPS_SNMP_COMMUNITY = 'fordaq_read'
+UPS_SNMP_USER = 'ups'
+UPS_SNMP_AUTHKEY = 'jSjej92nJQnsdif94k12khj589jksS'
+UPS_SNMP_PRIVKEY = 'jSjej92nJQnsdif94k12khj589jksS'
 
 
 # example of power off host
@@ -34,10 +37,12 @@ def power_off_host(ssh_host=None, ssh_user=None, ssh_key=None):
 if __name__ == "__main__":
 
 
-    ups = upsCyberPower(UPS_SNMP_HOST, UPS_SNMP_COMMUNITY)
+    #ups = upsCyberPower(ip=UPS_SNMP_HOST, community=UPS_SNMP_COMMUNITY, snmpv=2)
 
-    if(ups.get_baseOutputStatus[0] == 3 and ups.get_batteryChargePercentage < 40):
-        print("UPS is on battery and battery charge is less than 40%")
+    ups = upsCyberPower(ip=UPS_SNMP_HOST, user=UPS_SNMP_USER, authkey=UPS_SNMP_AUTHKEY, privkey=UPS_SNMP_PRIVKEY, snmpv=3)
+
+    #if(ups.get_baseOutputStatus[0] == 3 and ups.get_batteryChargePercentage < 40):
+    #    print("UPS is on battery and battery charge is less than 40%")
         #if power_off_host(ssh_host=SSH_HOST, ssh_user=SSH_USER, ssh_key=SSH_KEY):
         #    print("Host is shutting down")
         #else:
