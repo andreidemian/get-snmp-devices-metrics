@@ -3,19 +3,25 @@ from subprocess import Popen, PIPE
 import sys
 import os
 
-
-# SSH Configuration
+### SSH Configuration
+# ssh host address
 SSH_HOST = '192.168.1.1'
+# ssh user
 SSH_USER = 'user'
+# ssh key
 SSH_KEY = '/path/to/key'
 
-# UPS SNMP Configuration
+### UPS SNMP Configuration
+# ups snmp host address
 UPS_SNMP_HOST = '192.168.111.142'
-UPS_SNMP_COMMUNITY = 'fordaq_read'
+# ups snmp community
+UPS_SNMP_COMMUNITY = 'public'
+# ups snmp user
 UPS_SNMP_USER = 'ups'
+# ups snmp authkey
 UPS_SNMP_AUTHKEY = 'jSjej92nJQnsdif94k12khj589jksS'
+# ups snmp privkey
 UPS_SNMP_PRIVKEY = 'jSjej92nJQnsdif94k12khj589jksS'
-
 
 # example of power off host
 def power_off_host(ssh_host=None, ssh_user=None, ssh_key=None):
@@ -35,7 +41,6 @@ def power_off_host(ssh_host=None, ssh_user=None, ssh_key=None):
 
 # example class usage
 if __name__ == "__main__":
-
 
     #ups = upsCyberPower(ip=UPS_SNMP_HOST, community=UPS_SNMP_COMMUNITY, snmpv=2)
 
