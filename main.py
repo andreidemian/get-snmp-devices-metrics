@@ -5,7 +5,7 @@ import os
 
 ### SSH Configuration
 # ssh host address
-SSH_HOST = '192.168.1.1'
+SSH_HOST = '192.168.1.2'
 # ssh user
 SSH_USER = 'user'
 # ssh key
@@ -13,7 +13,7 @@ SSH_KEY = '/path/to/key'
 
 ### UPS SNMP Configuration
 # ups snmp host address
-UPS_SNMP_HOST = '192.168.111.142'
+UPS_SNMP_HOST = '192.168.1.142'
 # ups snmp community
 UPS_SNMP_COMMUNITY = 'public'
 # ups snmp user

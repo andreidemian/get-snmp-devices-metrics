@@ -55,10 +55,8 @@ class upsCyberPower:
                 # If no keys are provided, use noAuthNoPriv security level
                 usm_data = UsmUserData(self.user)
 
-
         SNMP_V = { 1: 0, 2: 1, 3: 3 }
 
-        
         errorIndication, errorStatus, errorIndex, varBinds = await getCmd(
             SnmpEngine(),
             usm_data if self.snmpv == 3 else CommunityData(self.community, mpModel=SNMP_V[self.snmpv]), # model 0 is SNMPv1, model 1 is SNMPv2c
@@ -82,6 +80,12 @@ class upsCyberPower:
         if(strValue == '0'):
             return '0'
         return float(f"{strValue[:-1]}.{strValue[-1]}")
+
+    def convert_centiseconds(self,cs : int) -> dict:
+        seconds = (cs // 100) % 60
+        minutes = (cs // (100 * 60)) % 60
+        hours = (cs // (100 * 60 * 60)) % 24
+        return { 'hours': hours, 'minutes': minutes, 'seconds': seconds, 'centiseconds': cs }
 
     @property
     def get_name(self) -> str:
@@ -148,7 +152,10 @@ class upsCyberPower:
 
     @property
     def get_batteryRuntime(self) -> str:
-        return asyncio.run(self.get_snmp_data('.1.3.6.1.4.1.3808.1.1.1.2.2.4.0'))
+        br = asyncio.run(self.get_snmp_data('.1.3.6.1.4.1.3808.1.1.1.2.2.4.0'))
+        if(br):
+            return self.convert_centiseconds(int(br))
+        return None
 
     @property
     def get_inputVoltage(self) -> float:
@@ -214,7 +221,7 @@ class upsCyberPower:
         """
          return the UPS state and the UPS state description
          example all output: 
-            (1, 'Unknown'), 
+            (1, 'Unknown'),
             (2, 'Online'), 
             (3, 'On Battery'), 
             (4, 'On Boost'), 
@@ -249,4 +256,11 @@ class upsCyberPower:
         lper = asyncio.run(self.get_snmp_data('.1.3.6.1.4.1.3808.1.1.1.4.2.3.0'))
         if(lper):
             return int(lper)
+        return None
+    
+    @property
+    def get_upsPowerRating(self) -> int:
+        upr = asyncio.run(self.get_snmp_data('.1.3.6.1.4.1.3808.1.1.1.1.2.6.0'))
+        if(upr):
+            return int(upr)
         return None
