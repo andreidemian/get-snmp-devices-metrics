@@ -193,7 +193,6 @@ class upsAPC(snmpRead):
         if(lper):
             return int(lper)
         return None
-    
 
 class upsCyberPower(snmpRead):
 
