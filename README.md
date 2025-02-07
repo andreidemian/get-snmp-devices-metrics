@@ -1,7 +1,7 @@
 # py-ups-snmp
 Python UPS SNMP
 
-### The pysnmp lib is needed for this class
+### The pysnmp lib needed for this class
 `python3 -m pip install pysnmp==7.1.16`
 
 CyberPower UPS Get SNMP V1 data
