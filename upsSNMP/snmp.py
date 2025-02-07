@@ -1,7 +1,9 @@
 import asyncio
 from pysnmp.hlapi.asyncio import (
-    getCmd,
-    nextCmd,
+    #getCmd,
+    get_cmd,
+    #nextCmd,
+    next_cmd,
     SnmpEngine, 
     CommunityData, 
     UdpTransportTarget, 
@@ -51,10 +53,10 @@ class snmpRead:
 
     async def run_snmp_get(self,oid:str) -> str:
 
-        errorIndication, errorStatus, errorIndex, varBinds = await getCmd(
+        errorIndication, errorStatus, errorIndex, varBinds = await get_cmd(
             SnmpEngine(),
             self.usm_data if self.snmpv == 3 else CommunityData(self.community, mpModel=self.snmpv), # model 0 is SNMPv1, model 1 is SNMPv2c
-            UdpTransportTarget((self.ip, self.port)),
+            await UdpTransportTarget.create((self.ip, self.port)),
             ContextData(),
             ObjectType(ObjectIdentity(oid))
         )
@@ -73,10 +75,10 @@ class snmpRead:
     async def run_snmp_get_next(self,oid:str=None) -> tuple:
 
         # SNMP walk using nextCmd
-        errorIndication, errorStatus, errorIndex, varBinds = await nextCmd(
+        errorIndication, errorStatus, errorIndex, varBinds = await next_cmd(
             SnmpEngine(),
             self.usm_data if self.snmpv == 3 else CommunityData(self.community, mpModel=self.snmpv),  # Use correct model for SNMP version
-            UdpTransportTarget((self.ip, self.port)),
+            await UdpTransportTarget.create((self.ip, self.port)),
             ContextData(),
             ObjectType(ObjectIdentity(oid)),
             lexicographicMode=False  # Set to False to stop when outside the subtree
