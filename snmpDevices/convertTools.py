@@ -1,6 +1,6 @@
 def toFloat(strValue: str) -> float:
     if(strValue == '0'):
-        return '0'
+        return 0.0
     return float(f"{strValue[:-1]}.{strValue[-1]}")
 
 def convert_centiseconds(cs : int) -> dict:

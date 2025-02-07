@@ -1,4 +1,4 @@
-from upsSNMP import upsCyberPower, upsAPC, HWgSTE
+from snmpDevices import upsCyberPower, upsAPC, HWgSTE
 
 # ups snmp user
 UPS_SNMP_USER = 'ups'

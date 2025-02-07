@@ -1,8 +1,8 @@
 import asyncio
 from pysnmp.hlapi.asyncio import (
     #getCmd,
-    get_cmd,
     #nextCmd,
+    get_cmd,
     next_cmd,
     SnmpEngine, 
     CommunityData, 

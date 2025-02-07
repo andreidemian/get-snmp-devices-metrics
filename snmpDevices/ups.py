@@ -216,6 +216,13 @@ class upsCyberPower(snmpRead):
         return self.get_oid('.1.3.6.1.2.1.1.6.0')
     
     @property
+    def get_serialNumber(self) -> str:
+        get_sn = self.get_oid('.1.3.6.1.4.1.3808.1.1.1.1.2.3.0')
+        if(get_sn):
+            return get_sn
+        return None
+    
+    @property
     def get_upsTemperature(self) -> int:
         temp = self.get_oid('.1.3.6.1.4.1.3808.1.1.1.10.2.0')
         if(temp):
@@ -347,6 +354,13 @@ class upsCyberPower(snmpRead):
             return toFloat(ouc)
         return None
     
+    @property
+    def get_outputWattage(self) -> int:
+        ouw = self.get_oid('.1.3.6.1.4.1.3808.1.1.1.4.2.5.0')
+        if(ouw):
+            return int(ouw)
+        return None
+
     @property
     def get_baseOutputStatus(self) -> tuple:
         """
