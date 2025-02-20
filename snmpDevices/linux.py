@@ -9,9 +9,9 @@ from .convertTools import (
     toFloat
 )
 
-class pfSense(snmpRead):
+class linux(snmpRead):
     """
-    pfSense SNMP class
+    Linux SNMP class
     """
 
     def __init__(self,ip: str,port: int = 161,snmpv: int = 1,community: str = None,user: str = None,authkey: str = None,privkey: str = None):
@@ -131,6 +131,153 @@ class pfSense(snmpRead):
         load_avg['load_avg15'] = float(load_avg15) if load_avg15 else None
 
         return load_avg
+
+    @property
+    def get_storage(self) -> list[dict]:
+        """
+        Storage usage metrics (Disk)
+        """
+        
+        storage_root_oid = '.1.3.6.1.2.1.25.2.3.1'
+        storage_index = self.walk_oid(f"{storage_root_oid}.1")
+
+        if storage_index:
+            storages = []
+            for oid, id in storage_index:
+                
+                storage = {}
+
+                # Storage type
+                storage_type = self.get_oid(f"{storage_root_oid}.2.{id}") if id else None
+
+                # only hrStorageFixedDisk type
+                if storage_type == '1.3.6.1.2.1.25.2.1.4':
+                    # The index of the storage area on the device.
+                    storage['Index'] = int(id)
+                    # The name of the storage area.
+                    storage['Descr'] = str(self.get_oid(f"{storage_root_oid}.3.{id}")) if id else None
+                    # The size of the storage area.
+                    storage['AllocationUnits'] = int(self.get_oid(f"{storage_root_oid}.4.{id}")) if id else None
+                    # The total size of the storage area.
+                    storage['Size'] = int(self.get_oid(f"{storage_root_oid}.5.{id}")) if id else None
+                    # The amount of the storage area that is currently in use.
+                    storage['Used'] = int(self.get_oid(f"{storage_root_oid}.6.{id}")) if id else None
+
+                    # The percentage of the storage area that is currently in use.
+                    storage['UsedPercent'] = round((storage['Used'] / storage['Size'] * 100),2)
+                    # The percentage of the storage area that is currently available.
+                    storage['FreePercent'] = 100 - storage['UsedPercent'] if storage['UsedPercent'] != None else 0.0
+
+                    storages.append(storage)
+                
+            storages.sort(key=lambda x: x['Index'])
+            return storages
+        return None
+
+    # Disk IO Metrics
+    @property
+    def get_diskIndex(self) -> list[int]:
+        """
+        Disk Index
+        """
+        indices = self.walk_oid(".1.3.6.1.4.1.2021.13.15.1.1.1")
+        return indices if indices else []
+
+    @property
+    def get_diskION(self) -> list[dict]:
+        """
+        Disk I/O Operations Metrics (Bytes)
+        """
+        disk_index = self.get_diskIndex
+        if disk_index:
+            disk = []
+            for index in disk_index:
+                idx = int(index[1]) if index[1] else None
+                disk_m = {}
+                # Represents the index of each disk device in the SNMP table.
+                disk_m['diskIOIndex'] = idx
+                # The name of the disk device.
+                disk_m['diskIODevice'] = str(self.get_oid(f".1.3.6.1.4.1.2021.13.15.1.1.2.{idx}")) if idx else None
+                # Total bytes read from each device since boot.
+                disk_m['diskIONRead'] = int(self.get_oid(f".1.3.6.1.4.1.2021.13.15.1.1.3.{idx}")) if idx else None
+                # Total bytes written to each device since boot.
+                disk_m['diskIONWritten'] = int(self.get_oid(f".1.3.6.1.4.1.2021.13.15.1.1.4.{idx}")) if idx else None
+                disk.append(disk_m)
+            disk.sort(key=lambda x: x['diskIOIndex'])
+            return disk
+        return None
+
+    @property
+    def get_diskIO(self) -> list[dict]:
+        """
+        Disk I/O Operations Metrics (Operations)
+        """
+        disk_index = self.get_diskIndex
+        if disk_index:
+            disk = []
+            for index in disk_index:
+                idx = int(index[1]) if index[1] else None
+                disk_m = {}
+                # Represents the index of each disk device in the SNMP table.
+                disk_m['diskIOIndex'] = idx
+                # The name of the disk device.
+                disk_m['diskIODevice'] = str(self.get_oid(f".1.3.6.1.4.1.2021.13.15.1.1.2.{idx}")) if idx else None
+                # Total read operations on each device since boot.
+                disk_m['diskIOReads'] = int(self.get_oid(f".1.3.6.1.4.1.2021.13.15.1.1.5.{idx}")) if idx else None
+                # Total write operations on each device since boot.
+                disk_m['diskIOWrites'] = int(self.get_oid(f".1.3.6.1.4.1.2021.13.15.1.1.6.{idx}")) if idx else None
+                disk.append(disk_m)
+            disk.sort(key=lambda x: x['diskIOIndex'])
+            return disk
+        return None
+
+    @property
+    def get_diskIOLA(self) -> list[dict]:
+        """
+        Disk I/O Load Average
+        1, 5, 15 minutes
+        """
+        disk_index = self.get_diskIndex
+        if disk_index:
+            disk = []
+            for index in disk_index:
+                idx = int(index[1]) if index[1] else None
+                disk_m = {}
+                # Represents the index of each disk device in the SNMP table.
+                disk_m['diskIOIndex'] = idx
+                # The name of the disk device.
+                disk_m['diskIODevice'] = str(self.get_oid(f".1.3.6.1.4.1.2021.13.15.1.1.2.{idx}")) if idx else None
+                # These values represent disk utilization over 1, 5, and 15 minutes, similar to CPU load averages.
+                disk_m['diskIOLA1'] = int(self.get_oid(f".1.3.6.1.4.1.2021.13.15.1.1.9.{idx}")) if idx else None
+                disk_m['diskIOLA5'] = int(self.get_oid(f".1.3.6.1.4.1.2021.13.15.1.1.10.{idx}")) if idx else None
+                disk_m['diskIOLA15'] = int(self.get_oid(f".1.3.6.1.4.1.2021.13.15.1.1.11.{idx}")) if idx else None
+                disk.append(disk_m)
+            disk.sort(key=lambda x: x['diskIOIndex'])
+            return disk
+        return None
+
+    @property
+    def get_diskIONX(self) -> list[dict]:
+        """
+        Disk I/O Operations Metrics (Extended)
+        """
+        disk_index = self.get_diskIndex
+        if disk_index:
+            disk = []
+            for index in disk_index:
+                idx = int(index[1]) if index[1] else None
+                disk_m = {}
+                # Represents the index of each disk device in the SNMP table.
+                disk_m['diskIOIndex'] = idx
+                # The name of the disk device.
+                disk_m['diskIODevice'] = str(self.get_oid(f".1.3.6.1.4.1.2021.13.15.1.1.2.{idx}")) if idx else None
+                # The diskIONReadX and diskIONWrittenX variables represent extended versions of the diskIONRead and diskIONWritten variables.
+                disk_m['diskIONReadX'] = int(self.get_oid(f".1.3.6.1.4.1.2021.13.15.1.1.12.{idx}")) if idx else None
+                disk_m['diskIONWrittenX'] = int(self.get_oid(f".1.3.6.1.4.1.2021.13.15.1.1.13.{idx}")) if idx else None
+                disk.append(disk_m)
+            disk.sort(key=lambda x: x['diskIOIndex'])
+            return disk
+        return None
 
     # Interface Metrics
     @property
@@ -575,4 +722,25 @@ class pfSense(snmpRead):
 
             return ipaddr_list
         return None
+    
+    # SNMP Sensors
+    @property
+    def get_sensors(self) -> list[dict]:
+        """
+        SNMP Sensors
+        """
+        # The OID prefix for the sensor table
+        sensor_root_oid = ".1.3.6.1.4.1.2021.13.16.2.1"
+        sensor_indices = self.walk_oid(f"{sensor_root_oid}.1")
+        if sensor_indices:
+            sensors = []
+            for oid, id in sensor_indices:
+                sensor = {}
+                sensor['sensorIndex'] = int(id)
+                sensor['descr'] = str(self.get_oid(f"{sensor_root_oid}.2.{id}")) if id != None else None
+                sensor['value'] = (int(self.get_oid(f"{sensor_root_oid}.3.{id}")) / 1000.0) if id != None else None
 
+                sensors.append(sensor)
+            sensors.sort(key=lambda x: x['sensorIndex'])
+            return sensors
+        return None

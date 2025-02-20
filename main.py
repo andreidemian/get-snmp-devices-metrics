@@ -1,4 +1,4 @@
-from snmpDevices import upsCyberPower, upsAPC, HWgSTE, pfSense
+from snmpDevices import upsCyberPower, upsAPC, HWgSTE, pfSense, linux
 
 # ups snmp user
 #UPS_SNMP_USER = 'ups'
@@ -8,14 +8,61 @@ from snmpDevices import upsCyberPower, upsAPC, HWgSTE, pfSense
 #UPS_SNMP_PRIVKEY = 'jSjej92nJQnsdif94k12khj589jksS'
 
 # example class usage
+import pprint
 if __name__ == "__main__":
-
-    pfsense = pfSense(ip='192.168.1.1' , community='public', snmpv=2)
-    import pprint
     pp = pprint.PrettyPrinter(indent=4)
+
+#    pfsense = pfSense(ip='192.168...' , community='public', snmpv=2)
     #pp.pprint(pfsense.get_ifMetrics)
     #pp.pprint(pfsense.get_ipAddEntIfIndex)
-    pp.pprint(pfsense.get_hostName)
+    #pp.pprint(pfsense.get_hostName)
+
+    lx = linux(ip='192.168...' , community='public', snmpv=2)
+    #pp.pprint(lx.get_hostName)
+    #pp.pprint(lx.get_contact)
+    #pp.pprint(lx.get_location)
+    #pp.pprint(lx.get_upTime)
+    
+    #pp.pprint(lx.get_memMetrics)
+    #pp.pprint(lx.get_memSwapMetrics)
+    #pp.pprint(lx.get_cpuMetrics)
+    #pp.pprint(lx.get_LoadAvg)
+    
+    #pp.pprint(lx.get_storage)
+    #pp.pprint(lx.get_diskIO)
+    #pp.pprint(lx.get_diskIOLA)
+    #pp.pprint(lx.get_diskION)
+    #pp.pprint(lx.get_diskIONX)
+
+    pp.pprint(lx.get_ifType)
+    print("="*50)
+    pp.pprint(lx.get_ifMtu)
+    print("="*50)
+    pp.pprint(lx.get_ifSpeed)
+    print("="*50)
+    pp.pprint(lx.get_ifPhysAddress)
+    print("="*50)
+    pp.pprint(lx.get_ifAdminStatus)
+    print("="*50)
+    pp.pprint(lx.get_ifOperStatus)
+    print("="*50)
+    pp.pprint(lx.get_ifLastChange)
+    print("="*50)
+    pp.pprint(lx.get_ifIOOctets)
+    print("="*50)
+    pp.pprint(lx.get_ifIOErrors)
+    print("="*50)
+    pp.pprint(lx.get_ifIODiscards)
+    print("="*50)
+    pp.pprint(lx.get_ifUnknownProtos)
+    print("="*50)
+    pp.pprint(lx.get_ifNUcastPkts)
+    print("="*50)
+    pp.pprint(lx.get_ifUcastPkts)
+    print("="*50)
+    pp.pprint(lx.get_ifOutQLen)
+    print("="*50)
+    pp.pprint(lx.get_ifIPAddress)
 
 #    ups = upsAPC(ip='192.168.2.2', community='public', snmpv=2)
 
