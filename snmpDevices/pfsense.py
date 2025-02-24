@@ -133,38 +133,6 @@ class pfSense(snmpRead):
         return load_avg
 
     # Interface Metrics
-
-        """
-        Interface IP Address and Netmask
-        """
-        # The index value which uniquely identifies the interface to which this entry is applicable.
-        ipAdEntIfIndex_oid = "1.3.6.1.2.1.4.20.1.2"
-        ipAdEntIfIndex = self.walk_oid(ipAdEntIfIndex_oid)
-
-        if ipAdEntIfIndex:
-
-            ipaddr_list = []
-            ipAdEntNetMask_oid = "1.3.6.1.2.1.4.20.1.3"
-            for ip in ipAdEntIfIndex:
-                
-                ipaddr = {}
-                # The index value which uniquely identifies the interface to which this entry is applicable.
-                ipaddr['ifIndex'] = int(ip[1])
-                # The name of the interface.
-                ipaddr['descr'] = str(self.get_oid(f".1.3.6.1.2.1.2.2.1.2.{ipaddr['ifIndex']}")) if ipaddr['ifIndex'] != None else None
-                # The IP address to which this entry's information pertains.
-                ipaddr['ipAddress'] = str(ip[0][len(ipAdEntIfIndex_oid)+1:]) if ip[0] != None else None
-                # The subnet mask associated with the IP address of this entry.
-                ipaddr['netmask'] = str(self.get_oid(f"{ipAdEntNetMask_oid}.{ipaddr['ipAddress']}")) if ipaddr['ipAddress'] != None else None
-
-                ipaddr_list.append(ipaddr)
-            # Sort by interface index
-            ipaddr_list.sort(key=lambda x: x['ifIndex'])
-
-            return ipaddr_list
-        return None
-
-    # Interface Metrics
     @property
     def get_ifType(self) -> list[dict]:
         """
