@@ -102,6 +102,35 @@ class ifaceMetrics(snmpRead):
         return iface_metrics
 
     @property
+    def get_ifHighSpeed(self) -> list[dict]:
+        """
+        Interface Speed (bits per second)
+        """
+        if_root_oid = ".1.3.6.1.2.1.2.2.1"
+        iface_indices = self.walk_oid(f"{if_root_oid}.1")
+
+        if not iface_indices:
+            return None
+
+        iface_metrics = []
+        for oid, id in iface_indices:
+            iface = {}
+            iface['Index'] = int(id)
+
+            # The name of the interface.
+            descr = self.get_oid(f"{if_root_oid}.2.{id}")
+            iface['descr'] = str(descr) if descr else None
+
+            # The speed of the interface in bits per second.
+            speed = int(self.get_oid(f".1.3.6.1.2.1.31.1.1.1.15.{id}"))
+            iface['HighSpeed'] = int(speed) if speed != None else None
+
+            iface_metrics.append(iface)
+        
+        iface_metrics.sort(key=lambda x: x['Index'])
+        return iface_metrics
+
+    @property
     def get_ifPhysAddress(self) -> list[dict]:
         """
         Interface Physical Address (MAC Address)
