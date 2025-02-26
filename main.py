@@ -1,4 +1,4 @@
-from snmpDevices import upsCyberPower, upsAPC, HWgSTE, pfSense, linux
+from snmpDevices import upsCyberPower, upsAPC, HWgSTE, ifaceMetrics, host
 
 # ups snmp user
 #UPS_SNMP_USER = 'ups'
@@ -12,21 +12,19 @@ import pprint
 if __name__ == "__main__":
     pp = pprint.PrettyPrinter(indent=4)
 
-    #lx = pfSense(ip='192...' , community='public', snmpv=2)
-    #pp.pprint(pfsense.get_ifMetrics)
-    #pp.pprint(pfsense.get_ipAddEntIfIndex)
-    #pp.pprint(pfsense.get_hostName)
+    lx = host(ip='192...' , community='public', snmpv=2)
 
-    lx = linux(ip='192...' , community='public', snmpv=2)
-    #pp.pprint(lx.get_hostName)
-    #pp.pprint(lx.get_contact)
-    #pp.pprint(lx.get_location)
-    #pp.pprint(lx.get_upTime)
+    pp.pprint(lx.get_hostName)
+    pp.pprint(lx.get_contact)
+    pp.pprint(lx.get_location)
+    pp.pprint(lx.get_upTime)
+
+    #lx = ifaceMetrics(ip='192...' , community='public', snmpv=2)
     
-    #pp.pprint(lx.get_memMetrics)
-    #pp.pprint(lx.get_memSwapMetrics)
-    #pp.pprint(lx.get_cpuMetrics)
-    #pp.pprint(lx.get_LoadAvg)
+    pp.pprint(lx.get_memMetrics)
+    pp.pprint(lx.get_memSwapMetrics)
+    pp.pprint(lx.get_cpuMetrics)
+    pp.pprint(lx.get_LoadAvg)
     
     pp.pprint(lx.get_storage)
     pp.pprint(lx.get_diskIO)
@@ -34,7 +32,7 @@ if __name__ == "__main__":
     pp.pprint(lx.get_diskION)
     pp.pprint(lx.get_diskIONX)
 
-    #pp.pprint(lx.get_sensors)
+    pp.pprint(lx.get_sensors)
 
 #    pp.pprint(lx.get_ifType)
 #    print("="*50)
@@ -63,6 +61,8 @@ if __name__ == "__main__":
 #    pp.pprint(lx.get_ifUcastPkts)
 #    print("="*50)
 #    pp.pprint(lx.get_ifOutQLen)
+#    print("="*50)
+#    pp.pprint(lx.get_ifAlias)
 #    print("="*50)
 #    pp.pprint(lx.get_ifIPAddress)
 
