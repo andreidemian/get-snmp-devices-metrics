@@ -254,6 +254,39 @@ class ifaceMetrics(snmpRead):
         return iface_metrics
 
     @property
+    def get_ifHCIOOctets(self) -> list[dict]:
+        """
+        Interface I/O Octets (High Capacity 64bit) (Bytes)
+        """
+        if_root_oid = ".1.3.6.1.2.1.2.2.1"
+        iface_indices = self.walk_oid(f"{if_root_oid}.1")
+
+        if not iface_indices:
+            return None
+
+        iface_metrics = []
+        for oid, id in iface_indices:
+            iface = {}
+            iface['Index'] = int(id)
+
+            # The name of the interface.
+            descr = self.get_oid(f"{if_root_oid}.2.{id}")
+            iface['descr'] = str(descr) if descr else None
+
+            # The total number of octets received on the interface, including framing characters.
+            InOctets = int(self.get_oid(f".1.3.6.1.2.1.31.1.1.1.6.{id}"))
+            iface['HCInOctets'] = int(InOctets) if InOctets != None else None
+
+            # The total number of octets transmitted out of the interface, including framing characters.
+            OutOctets = int(self.get_oid(f".1.3.6.1.2.1.31.1.1.1.10.{id}"))
+            iface['HCOutOctets'] = int(OutOctets) if OutOctets != None else None
+
+            iface_metrics.append(iface)
+        
+        iface_metrics.sort(key=lambda x: x['Index'])
+        return iface_metrics
+
+    @property
     def get_ifIOErrors(self) -> list[dict]:
         """
         Interface I/O Errors
